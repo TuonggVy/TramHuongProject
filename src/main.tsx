@@ -3,6 +3,7 @@ import type { ReactNode } from 'react'
 import { createRoot } from 'react-dom/client'
 import './index.css'
 import App from './App.tsx'
+import { AuthProvider } from './contexts/AuthContext'
 
 export type CartItem = { id: number; quantity: number }
 
@@ -56,8 +57,10 @@ function CartProvider({ children }: { children: ReactNode }) {
 
 createRoot(document.getElementById('root')!).render(
 	<StrictMode>
-		<CartProvider>
-			<App />
-		</CartProvider>
+		<AuthProvider>
+			<CartProvider>
+				<App />
+			</CartProvider>
+		</AuthProvider>
 	</StrictMode>,
 )

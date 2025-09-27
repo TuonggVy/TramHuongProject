@@ -1,7 +1,19 @@
-import { BrowserRouter, Routes, Route, Link, useParams, NavLink, useNavigate, useLocation } from 'react-router-dom'
+import { BrowserRouter, Routes, Route, Link, useParams, NavLink, useNavigate, useLocation, Navigate } from 'react-router-dom'
 import { useContext, useMemo, useState } from 'react'
 import { CartContext } from './main'
 import { useSeo } from './seo'
+import { useAuth } from './contexts/AuthContext'
+import type { Product, BlogPost } from './types'
+import { formatDate } from './utils'
+import AdminLayout from './components/AdminLayout.tsx'
+import AdminDashboard from './components/AdminDashboard'
+import AdminProducts from './components/AdminProducts'
+import AdminOrders from './components/AdminOrders'
+import AdminBlogs from './components/AdminBlogs'
+import AdminSettings from './components/AdminSettings'
+import LoginPage from './components/LoginPage'
+import UserAccount from './components/UserAccount'
+import ProtectedRoute from './components/ProtectedRoute'
 import logo from './assets/logo.jpg'
 import pic1 from './assets/chuoi1.png'
 import pic2 from './assets/nhangtram.png'
@@ -13,7 +25,7 @@ import pic7 from './assets/chuoi3.png'
 import pic8 from './assets/pic8.jpg'
 import pic9 from './assets/pic9.jpg'
 
-type Product = { id: number; name: string; category: string; price: number; salePrice?: number; image: string }
+// Product type is now imported from types
 
 const PRODUCTS: Product[] = [
 	{ id: 1, name: 'Trầm hương 1', category: 'Chuỗi trầm hương', price: 350000, salePrice: 320000, image: pic1 },
@@ -50,8 +62,10 @@ function Price({ price, salePrice }: { price: number; salePrice?: number }) {
 function Header() {
     const navigate = useNavigate()
     const { items } = useContext(CartContext)
+    const { user, isAdmin, logout } = useAuth()
     const total = items.reduce((sum, it) => sum + it.quantity, 0)
     const [query, setQuery] = useState('')
+    const [showUserMenu, setShowUserMenu] = useState(false)
 
     function submitSearch() {
         const q = query.trim()
@@ -60,6 +74,12 @@ function Header() {
 
     const navLinkClass = ({ isActive }: { isActive: boolean }) =>
         `transition-colors ${isActive ? 'underline underline-offset-8' : 'opacity-80 hover:opacity-100'}`
+
+    const handleLogout = () => {
+        logout()
+        navigate('/')
+        setShowUserMenu(false)
+    }
 
   return (
         <header className="sticky top-0 z-50 border-b border-black/50 backdrop-blur bg-white/80">
@@ -95,6 +115,59 @@ function Header() {
 							</span>
 						)}
 					</Link>
+
+                    {/* User Menu */}
+                    {user ? (
+                        <div className="relative">
+                            <button
+                                onClick={() => setShowUserMenu(!showUserMenu)}
+                                className="flex items-center gap-2 text-sm border border-black px-3 py-1 hover:bg-black hover:text-white transition-colors"
+                            >
+                                <span>{user.fullName || user.username}</span>
+                                {isAdmin && <span className="text-xs bg-red-500 text-white px-1 rounded">ADMIN</span>}
+                            </button>
+                            
+                            {showUserMenu && (
+                                <div className="absolute right-0 top-full mt-2 w-48 bg-white border border-black shadow-lg">
+                                    <div className="p-3 border-b border-gray-200">
+                                        <p className="font-medium">{user.fullName || user.username}</p>
+                                        <p className="text-xs opacity-60">{user.email}</p>
+                                    </div>
+                                    <div className="py-2">
+                                        {isAdmin && (
+                                            <Link
+                                                to="/admin/dashboard"
+                                                className="block px-3 py-2 text-sm hover:bg-gray-100"
+                                                onClick={() => setShowUserMenu(false)}
+                                            >
+                                                Admin Panel
+                                            </Link>
+                                        )}
+                                        <Link
+                                            to="/tai-khoan"
+                                            className="block px-3 py-2 text-sm hover:bg-gray-100"
+                                            onClick={() => setShowUserMenu(false)}
+                                        >
+                                            Tài khoản của tôi
+                                        </Link>
+                                        <button
+                                            onClick={handleLogout}
+                                            className="block w-full text-left px-3 py-2 text-sm hover:bg-gray-100"
+                                        >
+                                            Đăng xuất
+                                        </button>
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+                    ) : (
+                        <Link 
+                            to="/dang-nhap" 
+                            className="text-sm border border-black px-3 py-1 hover:bg-black hover:text-white transition-colors"
+                        >
+                            Đăng nhập
+                        </Link>
+                    )}
                     
 				</div>
 			</div>
@@ -413,10 +486,10 @@ function CartPage() {
 	)
 }
 
-const POSTS = [
-	{ id: 1, title: 'Cách phân biệt trầm hương tự nhiên', excerpt: 'Nhận biết trầm hương chất lượng qua hương thơm và vân gỗ...', content: 'Nội dung bài viết 1. Mô tả chi tiết cách phân biệt trầm hương tự nhiên và nhân tạo...', date: '2025-09-01' },
-	{ id: 2, title: 'Lợi ích của nhang trầm', excerpt: 'Nhang trầm giúp thư giãn, tĩnh tâm và khử mùi...', content: 'Nội dung bài viết 2. Tác dụng và cách sử dụng nhang trầm hiệu quả...', date: '2025-08-20' },
-	{ id: 3, title: 'Bảo quản vòng tay trầm', excerpt: 'Giữ mùi hương bền lâu và vân gỗ đẹp...', content: 'Nội dung bài viết 3. Hướng dẫn chi tiết bảo quản vòng tay trầm...', date: '2025-08-05' },
+const POSTS: BlogPost[] = [
+	{ id: 1, title: 'Cách phân biệt trầm hương tự nhiên', excerpt: 'Nhận biết trầm hương chất lượng qua hương thơm và vân gỗ...', content: 'Nội dung bài viết 1. Mô tả chi tiết cách phân biệt trầm hương tự nhiên và nhân tạo...', status: 'published', createdAt: '2025-09-01' },
+	{ id: 2, title: 'Lợi ích của nhang trầm', excerpt: 'Nhang trầm giúp thư giãn, tĩnh tâm và khử mùi...', content: 'Nội dung bài viết 2. Tác dụng và cách sử dụng nhang trầm hiệu quả...', status: 'published', createdAt: '2025-08-20' },
+	{ id: 3, title: 'Bảo quản vòng tay trầm', excerpt: 'Giữ mùi hương bền lâu và vân gỗ đẹp...', content: 'Nội dung bài viết 3. Hướng dẫn chi tiết bảo quản vòng tay trầm...', status: 'published', createdAt: '2025-08-05' },
 ]
 
 function BlogListPage() {
@@ -427,7 +500,7 @@ function BlogListPage() {
 			<div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-6">
                 {POSTS.map((p) => (
                     <Link key={p.id} to={`/tin-tuc/${p.id}`} className="border border-black p-4 hover:bg-black hover:text-white transition-colors">
-						<p className="text-sm opacity-60">{p.date}</p>
+						<p className="text-sm opacity-60">{formatDate(p.createdAt)}</p>
 						<h3 className="mt-1 font-medium">{p.title}</h3>
 						<p className="mt-2 text-sm opacity-80">{p.excerpt}</p>
 					</Link>
@@ -444,7 +517,7 @@ function BlogDetailPage() {
 	useSeo({ title: `${post.title} - Tin tức`, description: post.excerpt })
 	return (
 		<main className="container-page py-10">
-			<p className="text-sm opacity-60">{post.date}</p>
+			<p className="text-sm opacity-60">{formatDate(post.createdAt)}</p>
 			<h1 className="mt-1 text-2xl font-semibold">{post.title}</h1>
 			<article className="mt-4 max-w-3xl leading-relaxed opacity-90">
 				{post.content}
@@ -460,6 +533,7 @@ export default function App() {
                 <Header />
 				<div className="flex-1">
 					<Routes>
+						{/* Public Routes */}
 						<Route path="/" element={<HomePage />} />
 						<Route path="/san-pham" element={<ProductListPage />} />
 						<Route path="/san-pham/:id" element={<ProductDetailPage />} />
@@ -469,6 +543,55 @@ export default function App() {
 						<Route path="/tin-tuc/:id" element={<BlogDetailPage />} />
 						<Route path="/lien-he" element={<ContactPage />} />
 						<Route path="/gioi-thieu" element={<AboutPage />} />
+						
+						{/* Authentication Routes */}
+						<Route path="/dang-nhap" element={<LoginPage />} />
+						
+						{/* User Routes */}
+						<Route path="/tai-khoan" element={
+							<ProtectedRoute requireAuth={true}>
+								<UserAccount />
+							</ProtectedRoute>
+						} />
+						
+						{/* Admin Routes */}
+						<Route path="/admin" element={<Navigate to="/admin/dashboard" replace />} />
+						<Route path="/admin/login" element={<Navigate to="/admin/dashboard" replace />} />
+						<Route path="/admin/dashboard" element={
+							<ProtectedRoute requireAuth={true} requireAdmin={true}>
+								<AdminLayout>
+									<AdminDashboard />
+								</AdminLayout>
+							</ProtectedRoute>
+						} />
+						<Route path="/admin/products" element={
+							<ProtectedRoute requireAuth={true} requireAdmin={true}>
+								<AdminLayout>
+									<AdminProducts />
+								</AdminLayout>
+							</ProtectedRoute>
+						} />
+						<Route path="/admin/orders" element={
+							<ProtectedRoute requireAuth={true} requireAdmin={true}>
+								<AdminLayout>
+									<AdminOrders />
+								</AdminLayout>
+							</ProtectedRoute>
+						} />
+						<Route path="/admin/blogs" element={
+							<ProtectedRoute requireAuth={true} requireAdmin={true}>
+								<AdminLayout>
+									<AdminBlogs />
+								</AdminLayout>
+							</ProtectedRoute>
+						} />
+						<Route path="/admin/settings" element={
+							<ProtectedRoute requireAuth={true} requireAdmin={true}>
+								<AdminLayout>
+									<AdminSettings />
+								</AdminLayout>
+							</ProtectedRoute>
+						} />
 					</Routes>
 				</div>
 				<Footer />
