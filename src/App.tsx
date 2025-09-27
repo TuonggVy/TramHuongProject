@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route, Link, useParams, NavLink, useNavigate, us
 import { useContext, useMemo, useState } from 'react'
 import { CartContext } from './main'
 import { useSeo } from './seo'
+import logo from './assets/logo.jpg'
 import pic1 from './assets/pic1.jpg'
 import pic2 from './assets/pic2.png'
 import pic3 from './assets/pic3.webp'
@@ -64,7 +65,7 @@ function Header() {
         <header className="sticky top-0 z-50 border-b border-black/50 backdrop-blur bg-white/80">
 			<div className="container-page flex h-16 items-center justify-between gap-4">
 				<Link to="/" className="inline-flex items-center">
-					<img src="/logo.jpg" alt="Trầm Hương" className="h-10 w-auto" />
+					<img src={logo} alt="Trầm Hương" className="h-10 w-auto" />
 					<span className="sr-only">Trầm Hương</span>
 				</Link>
 				<nav className="hidden md:flex items-center gap-6 text-sm">
