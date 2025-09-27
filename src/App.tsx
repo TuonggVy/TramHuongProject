@@ -15,18 +15,18 @@ import pic9 from './assets/pic9.jpg'
 type Product = { id: number; name: string; category: string; price: number; salePrice?: number; image: string }
 
 const PRODUCTS: Product[] = [
-	{ id: 1, name: 'Trầm hương 1', category: 'Vòng tay', price: 350000, salePrice: 320000, image: pic1 },
-	{ id: 2, name: 'Trầm hương 2', category: 'Nhang trầm', price: 420000, image: pic2 },
-	{ id: 3, name: 'Trầm hương 3', category: 'Tinh dầu', price: 520000, salePrice: 480000, image: pic3 },
-	{ id: 4, name: 'Trầm hương 4', category: 'Vòng tay', price: 610000, image: pic4 },
-	{ id: 5, name: 'Trầm hương 5', category: 'Phụ kiện', price: 740000, salePrice: 690000, image: pic5 },
-	{ id: 6, name: 'Trầm hương 6', category: 'Nhang trầm', price: 890000, image: pic6 },
-	{ id: 7, name: 'Trầm hương 7', category: 'Vòng tay', price: 990000, image: pic7 },
-	{ id: 8, name: 'Trầm hương 8', category: 'Tinh dầu', price: 1250000, salePrice: 1120000, image: pic8 },
-	{ id: 9, name: 'Trầm hương 9', category: 'Phụ kiện', price: 1580000, image: pic9 },
+	{ id: 1, name: 'Trầm hương 1', category: 'Chuỗi trầm hương', price: 350000, salePrice: 320000, image: pic1 },
+	{ id: 2, name: 'Trầm hương 2', category: 'Nhang trầm hương', price: 420000, image: pic2 },
+	{ id: 3, name: 'Trầm hương 3', category: 'Phụ kiện phong thuỷ', price: 520000, salePrice: 480000, image: pic3 },
+	{ id: 4, name: 'Trầm hương 4', category: 'Chuỗi trầm hương', price: 610000, image: pic4 },
+	{ id: 5, name: 'Trầm hương 5', category: 'Phụ kiện phong thuỷ', price: 740000, salePrice: 690000, image: pic5 },
+	{ id: 6, name: 'Trầm hương 6', category: 'Nhang trầm hương', price: 890000, image: pic6 },
+	{ id: 7, name: 'Trầm hương 7', category: 'Chuỗi trầm hương', price: 990000, image: pic7 },
+	{ id: 8, name: 'Trầm hương 8', category: 'Phụ kiện phong thuỷ', price: 1250000, salePrice: 1120000, image: pic8 },
+	{ id: 9, name: 'Trầm hương 9', category: 'Phụ kiện phong thuỷ', price: 1580000, image: pic9 },
 ]
 
-const CATEGORIES = ['Tất cả', 'Vòng tay', 'Nhang trầm', 'Tinh dầu', 'Phụ kiện']
+const CATEGORIES = ['Tất cả', 'Nhang trầm hương', 'Chuỗi trầm hương', 'Phụ kiện phong thuỷ']
 
 const formatVND = (n: number) => new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(n)
 
