@@ -65,7 +65,7 @@ function Header() {
         <header className="sticky top-0 z-50 border-b border-black/50 backdrop-blur bg-white/80">
 			<div className="container-page flex h-16 items-center justify-between gap-4">
 				<Link to="/" className="inline-flex items-center">
-					<img src={logo} alt="Trầm Hương" className="h-12 w-auto" />
+					<img src={logo} alt="Trầm Hương" className="h-14 w-auto" />
 					<span className="sr-only">Trầm Hương</span>
 				</Link>
 				<nav className="hidden md:flex items-center gap-6 text-sm">
