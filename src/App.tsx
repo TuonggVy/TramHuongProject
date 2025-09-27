@@ -1,5 +1,5 @@
 import { BrowserRouter, Routes, Route, Link, useParams, NavLink, useNavigate, useLocation } from 'react-router-dom'
-import { useContext, useEffect, useState, useMemo } from 'react'
+import { useContext, useMemo, useState } from 'react'
 import { CartContext } from './main'
 import { useSeo } from './seo'
 import pic1 from './assets/pic1.jpg'
@@ -39,7 +39,7 @@ function Price({ price, salePrice }: { price: number; salePrice?: number }) {
 					<span className="text-base font-medium">{formatVND(salePrice)}</span>
 					<span className="text-sm opacity-60 line-through">{formatVND(price)}</span>
 				</div>
-				<span className="text-xs px-2 py-0.5 border border-black dark:border-white">-{percent}%</span>
+                <span className="text-xs px-2 py-0.5 border border-black">-{percent}%</span>
 			</div>
 		)
 	}
@@ -47,43 +47,21 @@ function Price({ price, salePrice }: { price: number; salePrice?: number }) {
 }
 
 function Header() {
-	const navigate = useNavigate()
-	const { items } = useContext(CartContext)
-	const total = items.reduce((sum, it) => sum + it.quantity, 0)
-	const [query, setQuery] = useState('')
-	const [isDark, setIsDark] = useState(() => {
-		return typeof document !== 'undefined' ? document.documentElement.classList.contains('dark') : true
-	})
+    const navigate = useNavigate()
+    const { items } = useContext(CartContext)
+    const total = items.reduce((sum, it) => sum + it.quantity, 0)
+    const [query, setQuery] = useState('')
 
-	function submitSearch() {
-		const q = query.trim()
-		if (q) navigate(`/san-pham?q=${encodeURIComponent(q)}`)
-	}
+    function submitSearch() {
+        const q = query.trim()
+        if (q) navigate(`/san-pham?q=${encodeURIComponent(q)}`)
+    }
 
-	useEffect(() => {
-		if (typeof document === 'undefined') return
-		const root = document.documentElement
-		if (isDark) {
-			root.classList.add('dark')
-			localStorage.setItem('theme', 'dark')
-		} else {
-			root.classList.remove('dark')
-			localStorage.setItem('theme', 'light')
-		}
-	}, [isDark])
-
-	useEffect(() => {
-		if (typeof document === 'undefined') return
-		const saved = localStorage.getItem('theme')
-		if (saved === 'dark') setIsDark(true)
-		if (saved === 'light') setIsDark(false)
-	}, [])
-
-	const navLinkClass = ({ isActive }: { isActive: boolean }) =>
-		`transition-colors ${isActive ? 'underline underline-offset-8' : 'opacity-80 hover:opacity-100'}`
+    const navLinkClass = ({ isActive }: { isActive: boolean }) =>
+        `transition-colors ${isActive ? 'underline underline-offset-8' : 'opacity-80 hover:opacity-100'}`
 
   return (
-		<header className="sticky top-0 z-50 border-b border-black/50 dark:border-white/40 backdrop-blur bg-white/80 dark:bg-black/60">
+        <header className="sticky top-0 z-50 border-b border-black/50 backdrop-blur bg-white/80">
 			<div className="container-page flex h-16 items-center justify-between gap-4">
 				<Link to="/" className="text-xl font-semibold tracking-wide">TRẦM HƯƠNG</Link>
 				<nav className="hidden md:flex items-center gap-6 text-sm">
@@ -94,37 +72,26 @@ function Header() {
 					<NavLink to="/lien-he" className={navLinkClass}>Liên hệ</NavLink>
 				</nav>
 				<div className="flex items-center gap-2 md:gap-4">
-					<div className="relative hidden sm:block">
+                    <div className="relative hidden sm:block">
 						<input
 							type="search"
 							placeholder="Tìm trầm hương..."
 							value={query}
 							onChange={(e) => setQuery(e.target.value)}
 							onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); submitSearch() } }}
-							className="h-9 w-48 md:w-64 rounded border border-black dark:border-white bg-transparent px-3 text-sm outline-none placeholder:opacity-60"
+                            className="h-9 w-48 md:w-64 rounded border border-black bg-transparent px-3 text-sm outline-none placeholder:opacity-60"
 						/>
 						<span className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 opacity-60 text-xs">↵</span>
 					</div>
 					<Link to="/gio-hang" className="relative inline-flex items-center gap-2 text-sm">
 						<span>Giỏ hàng</span>
 						{total > 0 && (
-							<span className="absolute -right-3 -top-2 inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-black text-white dark:bg-white dark:text-black px-1 text-[11px]">
+                            <span className="absolute -right-3 -top-2 inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-black text-white px-1 text-[11px]">
 								{total}
 							</span>
 						)}
 					</Link>
-					<button
-						type="button"
-						aria-label="Toggle theme"
-						onClick={() => setIsDark((v) => !v)}
-						className="h-9 w-9 inline-flex items-center justify-center rounded border border-black dark:border-white hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black transition-colors"
-					>
-						{isDark ? (
-							<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="h-4 w-4"><path d="M21.64 13A9 9 0 1111 2.36 7 7 0 0021.64 13z"/></svg>
-						) : (
-							<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="h-4 w-4"><path d="M12 18a6 6 0 100-12 6 6 0 000 12z"/></svg>
-						)}
-					</button>
+                    
 				</div>
 			</div>
 			<div className="container-page md:hidden flex items-center gap-4 py-2">
@@ -134,7 +101,7 @@ function Header() {
 					value={query}
 					onChange={(e) => setQuery(e.target.value)}
 					onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); submitSearch() } }}
-					className="h-9 w-full rounded border border-black dark:border-white bg-transparent px-3 text-sm outline-none placeholder:opacity-60"
+                    className="h-9 w-full rounded border border-black bg-transparent px-3 text-sm outline-none placeholder:opacity-60"
 				/>
 			</div>
 		</header>
@@ -143,7 +110,7 @@ function Header() {
 
 function Footer() {
 	return (
-		<footer className="border-t border-black dark:border-white mt-16">
+        <footer className="border-t border-black mt-16">
 			<div className="container-page py-8 text-sm flex flex-col md:flex-row items-center justify-between gap-4 opacity-90">
 				<div>© {new Date().getFullYear()} Trầm Hương. All rights reserved.</div>
 				<div className="flex items-center gap-4">
@@ -158,8 +125,8 @@ function Footer() {
 
 function HomePage() {
 	useSeo({ title: 'Trầm Hương - Monochrome', description: 'Cửa hàng trầm hương: vòng tay, nhang trầm, tinh dầu, phụ kiện.' })
-	return (
-		<main className="container-page py-10">
+    return (
+        <main className="container-page py-10">
 			<section className="mb-10 grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
       <div>
 					<h1 className="text-3xl md:text-5xl font-bold tracking-tight">Tinh hoa trầm hương</h1>
@@ -172,7 +139,7 @@ function HomePage() {
 					</div>
 				</div>
 				<div className="w-full">
-					<div className="h-64 md:h-80 w-full bg-gradient-to-br from-black/90 to-transparent dark:from-white/20 p-0 relative overflow-hidden rounded-md border border-black dark:border-white">
+                    <div className="h-64 md:h-80 w-full bg-gradient-to-br from-black/90 to-transparent p-0 relative overflow-hidden rounded-md border border-black">
 						<img loading="lazy" src={pic1} alt="Trầm hương" className="absolute inset-0 w-full h-full object-cover mix-blend-luminosity" />
 					</div>
 				</div>
@@ -183,9 +150,9 @@ function HomePage() {
 					<Link key={p.id} to={`/san-pham/${p.id}`} className="card card-hover group p-0">
 						<div className="relative">
 							<img loading="lazy" src={p.image} alt={p.name} className="w-full h-56 object-cover" />
-							{p.salePrice && p.salePrice < p.price && (
-								<span className="absolute left-2 top-2 bg-black text-white dark:bg-white dark:text-black text-xs px-2 py-0.5">SALE</span>
-							)}
+                            {p.salePrice && p.salePrice < p.price && (
+                                <span className="absolute left-2 top-2 bg-black text-white text-xs px-2 py-0.5">SALE</span>
+                            )}
 						</div>
 						<div className="p-6">
 							<h3 className="text-lg font-medium">{p.name}</h3>
@@ -224,23 +191,23 @@ function ProductListPage() {
 			<h2 className="text-2xl font-semibold">Tất cả sản phẩm{q ? `: "${q}"` : ''}</h2>
 			<div className="mt-4 flex flex-wrap items-center gap-2">
 				{CATEGORIES.map((c) => (
-					<button
-						key={c}
-						onClick={() => setCategory(c)}
-						className={`px-3 py-1 text-sm border ${c === category ? 'bg-black text-white dark:bgWhite dark:text-black' : 'border-black dark:border-white'}`}
-					>
+                    <button
+                        key={c}
+                        onClick={() => setCategory(c)}
+                        className={`px-3 py-1 text-sm border ${c === category ? 'bg-black text-white' : 'border-black'}`}
+                    >
 						{c}
         </button>
 				))}
 			</div>
 			<div className="mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
 				{filtered.map((p) => (
-					<Link key={p.id} to={`/san-pham/${p.id}`} className="card card-hover hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black">
+                    <Link key={p.id} to={`/san-pham/${p.id}`} className="card card-hover hover:bg-black hover:text-white">
 						<div className="relative">
 							<img loading="lazy" src={p.image} alt={p.name} className="w-full h-56 object-cover" />
-							{p.salePrice && p.salePrice < p.price && (
-								<span className="absolute left-2 top-2 bg-black text-white dark:bg-white dark:text-black text-xs px-2 py-0.5">SALE</span>
-							)}
+                            {p.salePrice && p.salePrice < p.price && (
+                                <span className="absolute left-2 top-2 bg-black text-white text-xs px-2 py-0.5">SALE</span>
+                            )}
 						</div>
 						<div className="p-6">
 							<h3 className="font-medium">{p.name}</h3>
@@ -270,7 +237,7 @@ function ProductDetailPage() {
 		<main className="container-page py-10">
 			<div className="grid grid-cols-1 md:grid-cols-2 gap-8">
 				<div>
-					<div className="rounded-md border border-black dark:border-white overflow-hidden">
+                    <div className="rounded-md border border-black overflow-hidden">
 						<img loading="lazy" src={product.image} alt={product.name} className="w-full aspect-square object-cover" />
 					</div>
 				</div>
@@ -315,26 +282,26 @@ function CheckoutPage() {
 			<div className="mt-6 grid grid-cols-1 lg:grid-cols-3 gap-8">
 				<form onSubmit={handleSubmit} className="lg:col-span-2 space-y-4">
 					<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-						<div>
-							<label className="text-sm opacity-80">Họ và tên</label>
-							<input required className="mt-1 w-full rounded border border-black dark:border-white bg-transparent px-3 py-2" />
-						</div>
+                        <div>
+                            <label className="text-sm opacity-80">Họ và tên</label>
+                            <input required className="mt-1 w-full rounded border border-black bg-transparent px-3 py-2" />
+                        </div>
 						<div>
 							<label className="text-sm opacity-80">Số điện thoại</label>
-							<input required type="tel" className="mt-1 w-full rounded border border-black dark:border-white bg-transparent px-3 py-2" />
+                            <input required type="tel" className="mt-1 w-full rounded border border-black bg-transparent px-3 py-2" />
 						</div>
 						<div className="md:col-span-2">
 							<label className="text-sm opacity-80">Địa chỉ</label>
-							<input required className="mt-1 w-full rounded border border-black dark:border-white bg-transparent px-3 py-2" />
+                            <input required className="mt-1 w-full rounded border border-black bg-transparent px-3 py-2" />
 						</div>
 						<div className="md:col-span-2">
 							<label className="text-sm opacity-80">Ghi chú</label>
-							<textarea className="mt-1 w-full rounded border border-black dark:border-white bg-transparent px-3 py-2 h-24" />
+                            <textarea className="mt-1 w-full rounded border border-black bg-transparent px-3 py-2 h-24" />
 						</div>
 					</div>
 					<button type="submit" className="button-primary">Đặt hàng</button>
 				</form>
-				<aside className="border border-black dark:border-white p-4 h-fit space-y-3">
+                <aside className="border border-black p-4 h-fit space-y-3">
 					<p className="font-semibold">Đơn hàng</p>
 					<ul className="space-y-2 text-sm">
 						{enriched.map((it) => (
@@ -361,10 +328,10 @@ function ContactPage() {
 		<main className="container-page py-10">
 			<h2 className="text-2xl font-semibold">Liên hệ</h2>
 			<p className="mt-3 opacity-80">Mọi thắc mắc xin gửi về email: contact@tramhuong.vn hoặc gọi 0900 000 000.</p>
-			<form className="mt-6 max-w-xl space-y-3">
-				<input placeholder="Họ và tên" className="w-full rounded border border-black dark:border-white bg-transparent px-3 py-2" />
-				<input placeholder="Email" type="email" className="w-full rounded border border-black dark:border-white bg-transparent px-3 py-2" />
-				<textarea placeholder="Nội dung" className="w-full h-32 rounded border border-black dark:border-white bg-transparent px-3 py-2" />
+            <form className="mt-6 max-w-xl space-y-3">
+                <input placeholder="Họ và tên" className="w-full rounded border border-black bg-transparent px-3 py-2" />
+                <input placeholder="Email" type="email" className="w-full rounded border border-black bg-transparent px-3 py-2" />
+                <textarea placeholder="Nội dung" className="w-full h-32 rounded border border-black bg-transparent px-3 py-2" />
 				<button className="button-primary">Gửi</button>
 			</form>
 		</main>
@@ -401,9 +368,9 @@ function CartPage() {
 			) : (
 				<div className="mt-6 grid grid-cols-1 lg:grid-cols-3 gap-8">
 					<div className="lg:col-span-2 space-y-3">
-						{enriched.map((it) => (
-							<div key={it.id} className="flex gap-4 border border-black dark:border-white p-3">
-								<img src={it.product.image} alt={it.product.name} className="h-20 w-20 object-cover border border-black dark:border-white" />
+                        {enriched.map((it) => (
+                            <div key={it.id} className="flex gap-4 border border-black p-3">
+                                <img src={it.product.image} alt={it.product.name} className="h-20 w-20 object-cover border border-black" />
 								<div className="flex-1">
 									<div className="flex items-start justify-between gap-4">
 										<div>
@@ -414,9 +381,9 @@ function CartPage() {
 									</div>
 									<div className="mt-3 flex items-center justify-between">
 										<div className="inline-flex items-center gap-2">
-											<button onClick={() => decrement(it.id)} className="h-8 w-8 border border-black dark:border-white inline-flex items-center justify-center">-</button>
+                                            <button onClick={() => decrement(it.id)} className="h-8 w-8 border border-black inline-flex items-center justify-center">-</button>
 											<span className="min-w-8 text-center">{it.quantity}</span>
-											<button onClick={() => increment(it.id)} className="h-8 w-8 border border-black dark:border-white inline-flex items-center justify-center">+</button>
+                                            <button onClick={() => increment(it.id)} className="h-8 w-8 border border-black inline-flex items-center justify-center">+</button>
 										</div>
 										<p className="text-sm">Thành tiền: <span className="font-medium">{formatVND(it.lineTotal)}</span></p>
 									</div>
@@ -424,7 +391,7 @@ function CartPage() {
 							</div>
 						))}
 					</div>
-					<aside className="border border-black dark:border-white p-4 h-fit space-y-3">
+                    <aside className="border border-black p-4 h-fit space-y-3">
 						<p className="font-semibold">Tổng quan</p>
 						<div className="space-y-1 text-sm">
 							<div className="flex justify-between"><span>Tạm tính</span><span>{formatVND(subtotal)}</span></div>
@@ -433,7 +400,7 @@ function CartPage() {
 						</div>
 						<div className="flex gap-2">
 							<Link to="/thanh-toan" className="button-primary flex-1 text-center">Thanh toán</Link>
-							<button onClick={() => clear()} className="flex-1 border border-black dark:border-white px-4 py-2 text-sm hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black transition-colors">Xóa tất cả</button>
+                            <button onClick={() => clear()} className="flex-1 border border-black px-4 py-2 text-sm hover:bg-black hover:text-white transition-colors">Xóa tất cả</button>
 						</div>
 					</aside>
 				</div>
@@ -454,8 +421,8 @@ function BlogListPage() {
 		<main className="container-page py-10">
 			<h2 className="text-2xl font-semibold">Tin tức</h2>
 			<div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-6">
-				{POSTS.map((p) => (
-					<Link key={p.id} to={`/tin-tuc/${p.id}`} className="border border-black dark:border-white p-4 hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black transition-colors">
+                {POSTS.map((p) => (
+                    <Link key={p.id} to={`/tin-tuc/${p.id}`} className="border border-black p-4 hover:bg-black hover:text-white transition-colors">
 						<p className="text-sm opacity-60">{p.date}</p>
 						<h3 className="mt-1 font-medium">{p.title}</h3>
 						<p className="mt-2 text-sm opacity-80">{p.excerpt}</p>
@@ -486,7 +453,7 @@ export default function App() {
 	return (
 		<BrowserRouter>
 			<div className="min-h-screen flex flex-col">
-				<Header />
+                <Header />
 				<div className="flex-1">
 					<Routes>
 						<Route path="/" element={<HomePage />} />
