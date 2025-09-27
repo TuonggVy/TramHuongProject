@@ -63,7 +63,10 @@ function Header() {
   return (
         <header className="sticky top-0 z-50 border-b border-black/50 backdrop-blur bg-white/80">
 			<div className="container-page flex h-16 items-center justify-between gap-4">
-				<Link to="/" className="text-xl font-semibold tracking-wide">TRẦM HƯƠNG</Link>
+				<Link to="/" className="inline-flex items-center">
+					<img src="/logo.png" alt="Trầm Hương" className="h-10 w-auto" />
+					<span className="sr-only">Trầm Hương</span>
+				</Link>
 				<nav className="hidden md:flex items-center gap-6 text-sm">
 					<NavLink to="/" className={navLinkClass} end>Trang chủ</NavLink>
 					<NavLink to="/san-pham" className={navLinkClass}>Sản phẩm</NavLink>
